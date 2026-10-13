@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auren | Asistente de Normativa Fiscal y Legal Interna</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col bg-slate-100 text-slate-800 antialiased overflow-hidden">
+
+    <!-- Encabezado Principal / Branding Auren & Microsoft -->
+    <header class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between shadow-md border-b border-slate-800 z-10">
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+                <div class="bg-blue-600 text-white font-bold p-1.5 rounded-lg flex items-center justify-center w-9 h-9 text-lg shadow-sm">
+                    A
+                </div>
+                <div>
+                    <h1 class="font-bold text-base leading-tight tracking-wide flex items-center gap-2">
+                        Auren Consultoría <span class="bg-blue-900/60 text-blue-300 text-xs px-2 py-0.5 rounded border border-blue-700/50 font-normal">Spain</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Asistente de Normativa Fiscal & Legal • Powered by Azure AI & Copilot</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestañas de Navegación -->
+        <nav class="flex space-x-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+            <button id="nav-chat" onclick="switchTab('chat')" class="tab-btn px-4 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 bg-blue-600 text-white shadow-sm">
+                <i data-lucide="bot" class="w-4 h-4"></i> Asistente IA (RAG)
+            </button>
+            <button id="nav-docs" onclick="switchTab('docs')" class="tab-btn px-4 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-2 hover:bg-slate-700/50">
+                <i data-lucide="file-text" class="w-4 h-4"></i> Base Documental
+            </button>
+            <button id="nav-architecture" onclick="switchTab('architecture')" class="tab-btn px-4 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-2 hover:bg-slate-700/50">
+                <i data-lucide="network" class="w-4 h-4"></i> Arquitectura RAG
+            </button>
+            <button id="nav-admin" onclick="switchTab('admin')" class="tab-btn px-4 py-1.5 text-xs font-medium text-slate-300 hover:text-white rounded-lg transition-all flex items-center gap-2 hover:bg-slate-700/50">
+                <i data-lucide="sliders" class="w-4 h-4"></i> Copilot Studio Config
+            </button>
+        </nav>
+
+        <!-- Estado del Usuario / Entorno -->
+        <div class="flex items-center space-x-3 text-xs">
+            <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-slate-300 font-medium">Entorno Seguro Auren</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-blue-800 border border-blue-500 text-white flex items-center justify-center font-bold text-xs">
+                RV
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-hidden relative">
+
+        <!-- ==================== TAB 1: ASISTENTE IA (CHAT CON RAG) ==================== -->
+        <div id="tab-chat" class="tab-content h-full flex flex-col lg:flex-row p-4 gap-4">
+            <!-- Lateral de Escenarios Rápido -->
+            <div class="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 text-slate-800 font-semibold mb-3 pb-2 border-b border-slate-100 text-sm">
+                        <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Consultas Frecuentes Auren
+                    </div>
+                    <p class="text-xs text-slate-500 mb-3">Selecciona un escenario rápido de normativa para evaluar la precisión del motor RAG:</p>
+                    
+                    <div class="space-y-2">
+                        <button onclick="sendQuickPrompt('Deducción IRPF')" class="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/50 transition text-xs font-medium text-slate-700 flex items-center justify-between group">
+                            <span><strong class="text-blue-900 block">Deducción IRPF</strong> Gastos de representación</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition"></i>
+                        </button>
+
+                        <button onclick="sendQuickPrompt('Viajes y Dietas')" class="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/50 transition text-xs font-medium text-slate-700 flex items-center justify-between group">
+                            <span><strong class="text-blue-900 block">Viajes y Dietas</strong> Política de desplazamiento</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition"></i>
+                        </button>
+
+                        <button onclick="sendQuickPrompt('Facturación Intracomunitaria')" class="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/50 transition text-xs font-medium text-slate-700 flex items-center justify-between group">
+                            <span><strong class="text-blue-900 block">IVA Intracomunitario</strong> Protocolo de facturación</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition"></i>
+                        </button>
+
+                        <button onclick="sendQuickPrompt('Teletrabajo y Conciliación')" class="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/50 transition text-xs font-medium text-slate-700 flex items-center justify-between group">
+                            <span><strong class="text-blue-900 block">Trabajo Remoto</strong> Convenio Auren 2026</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition"></i>
+                        </button>
+
+                        <button onclick="sendQuickPrompt('Protección de Datos RGPD')" class="w-full text-left p-2.5 rounded-xl border border-slate-100 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/50 transition text-xs font-medium text-slate-700 flex items-center justify-between group">
+                            <span><strong class="text-blue-900 block">Tratamiento RGPD</strong> Información de cliente</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 bg-blue-50/60 p-3 rounded-xl border border-blue-100">
+                    <div class="flex items-center gap-1.5 font-semibold text-blue-900 mb-1">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i> Gobernanza de Datos
+                    </div>
+                    <p class="leading-relaxed">Las respuestas están respaldadas únicamente por documentación verificada de SharePoint Auren. No se utilizan modelos públicos.</p>
+                </div>
+            </div>
+
+            <!-- Área Central de Conversación -->
+            <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full overflow-hidden">
+                <!-- Header del Chat -->
+                <div class="p-3.5 px-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-800">Copilot Consultoría Auren</h2>
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Azure AI Search (Vector Store) Conectado
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="clearChat()" class="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reiniciar Chat
+                    </button>
+                </div>
+
+                <!-- Lista de Mensajes -->
+                <div id="chat-messages" class="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-4">
+                    <!-- Mensaje Inicial de Bienvenida -->
+                    <div class="flex gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 flex-shrink-0 flex items-center justify-center text-white shadow-sm">
+                            <i data-lucide="bot" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex-1 max-w-2xl">
+                            <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none text-slate-800 text-xs leading-relaxed border border-slate-200">
+                                <p class="font-semibold text-slate-900 mb-1">Hola, Ronny. ¿En qué normativa fiscal o legal interna de Auren puedo ayudarte hoy?</p>
+                                <p>Puedo consultar circulares, convenios, guías de tributación y políticas internas alojadas en nuestro repositorio oficial con citas exactas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input de Mensaje -->
+                <div class="p-4 border-t border-slate-100 bg-white">
+                    <form id="chat-form" onsubmit="handleChatSubmit(event)" class="relative flex items-center">
+                        <input id="chat-input" type="text" placeholder="Escribe tu consulta sobre normativa interna o procedimiento..." class="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition text-slate-800 font-medium">
+                        <button type="submit" class="absolute right-2 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-sm">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    <div class="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-400">
+                        <span>Tip: Puedes preguntar por artículos específicos o solicitar resumen de circulares.</span>
+                        <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Confidencial - Uso Interno</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: BASE DOCUMENTAL ==================== -->
+        <div id="tab-docs" class="tab-content hidden h-full p-4 overflow-y-auto custom-scrollbar">
+            <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="folder-git-2" class="w-5 h-5 text-blue-600"></i> Repositorio de Normativa Interna (SharePoint Sync)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Documentación oficial utilizada para el índice vectorial RAG de Azure AI Search</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="triggerUploadModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2 shadow-sm">
+                            <i data-lucide="upload-cloud" class="w-4 h-4"></i> Subir Nueva Normativa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros y Buscador -->
+                <div class="flex flex-col md:flex-row gap-3 my-5">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                        <input id="doc-search" oninput="filterDocuments()" type="text" placeholder="Buscar por título, código o palabra clave..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setFilterCategory('All')" class="filter-btn active px-3 py-2 bg-slate-900 text-white text-xs font-medium rounded-xl transition">Todos</button>
+                        <button onclick="setFilterCategory('Fiscal')" class="filter-btn px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">Fiscal</button>
+                        <button onclick="setFilterCategory('Laboral')" class="filter-btn px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">Laboral</button>
+                        <button onclick="setFilterCategory('Mercantil')" class="filter-btn px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">Mercantil</button>
+                        <button onclick="setFilterCategory('Protección de Datos')" class="filter-btn px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition">RGPD</button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Documentos -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 font-semibold text-xs border-b border-slate-200">
+                                <th class="p-3.5 pl-4">Código / Documento</th>
+                                <th class="p-3.5">Categoría</th>
+                                <th class="p-3.5">Última Revisión</th>
+                                <th class="p-3.5">Estado</th>
+                                <th class="p-3.5">Indexación RAG</th>
+                                <th class="p-3.5 text-right pr-4">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="docs-table-body" class="divide-y divide-slate-100 text-xs text-slate-700">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: ARQUITECTURA RAG ==================== -->
+        <div id="tab-architecture" class="tab-content hidden h-full p-4 overflow-y-auto custom-scrollbar">
+            <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-5 h-5 text-blue-600"></i> Arquitectura Técnica de la Solución (Enterprise RAG)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Diagrama del flujo de datos en el entorno Microsoft Azure para Auren Consultoría</p>
+                </div>
+
+                <!-- Diagrama Interactivo de Flujo -->
+                <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-inner relative overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+                        <!-- Paso 1 -->
+                        <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl flex flex-col justify-between hover:border-blue-500 transition">
+                            <div>
+                                <span class="bg-blue-600/30 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-500/30 uppercase">Fase 1: Origen</span>
+                                <h3 class="font-bold text-sm text-slate-100 mt-2 flex items-center gap-2">
+                                    <i data-lucide="file-spreadsheets" class="w-4 h-4 text-blue-400"></i> SharePoint Online
+                                </h3>
+                                <p class="text-[11px] text-slate-400 mt-2">Almacenamiento seguro de leyes, convenios y circulares fiscales internas de Auren.</p>
+                            </div>
+                            <div class="mt-4 pt-2 border-t border-slate-700/60 text-[10px] text-slate-400">
+                                SSO & Permisos Entra ID
+                            </div>
+                        </div>
+
+                        <!-- Paso 2 -->
+                        <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl flex flex-col justify-between hover:border-blue-500 transition">
+                            <div>
+                                <span class="bg-indigo-600/30 text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded border border-indigo-500/30 uppercase">Fase 2: Indexación</span>
+                                <h3 class="font-bold text-sm text-slate-100 mt-2 flex items-center gap-2">
+                                    <i data-lucide="database" class="w-4 h-4 text-indigo-400"></i> Azure AI Search
+                                </h3>
+                                <p class="text-[11px] text-slate-400 mt-2">Generación de Embeddings vectoriales y fragmentación de documentos (Chunking).</p>
+                            </div>
+                            <div class="mt-4 pt-2 border-t border-slate-700/60 text-[10px] text-slate-400">
+                                Búsqueda Híbrida + Re-ranking
+                            </div>
+                        </div>
+
+                        <!-- Paso 3 -->
+                        <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl flex flex-col justify-between hover:border-blue-500 transition">
+                            <div>
+                                <span class="bg-purple-600/30 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-500/30 uppercase">Fase 3: Razonamiento</span>
+                                <h3 class="font-bold text-sm text-slate-100 mt-2 flex items-center gap-2">
+                                    <i data-lucide="brain" class="w-4 h-4 text-purple-400"></i> Azure OpenAI (GPT-4o)
+                                </h3>
+                                <p class="text-[11px] text-slate-400 mt-2">Síntesis precisa de respuestas con temperatura 0.0 y citación de fuentes obligatoria.</p>
+                            </div>
+                            <div class="mt-4 pt-2 border-t border-slate-700/60 text-[10px] text-slate-400">
+                                Datos Privados (Sin Entrenamiento)
+                            </div>
+                        </div>
+
+                        <!-- Paso 4 -->
+                        <div class="bg-slate-800/90 border border-slate-700 p-4 rounded-xl flex flex-col justify-between hover:border-blue-500 transition">
+                            <div>
+                                <span class="bg-emerald-600/30 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/30 uppercase">Fase 4: Consumo</span>
+                                <h3 class="font-bold text-sm text-slate-100 mt-2 flex items-center gap-2">
+                                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-400"></i> Copilot / Teams
+                                </h3>
+                                <p class="text-[11px] text-slate-400 mt-2">Interfaz de usuario en Copilot Studio o Power Apps accesible directamente desde Microsoft Teams.</p>
+                            </div>
+                            <div class="mt-4 pt-2 border-t border-slate-700/60 text-[10px] text-slate-400">
+                                UI Amigable para Consultores
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Garantías de Seguridad Corporativa -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-xs text-blue-900 flex items-center gap-2 mb-1">
+                            <i data-lucide="shield" class="w-4 h-4 text-blue-600"></i> Privacidad Privada
+                        </h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Los datos nunca salen del tenant de Microsoft 365 de Auren ni se utilizan para entrenar modelos públicos.</p>
+                    </div>
+
+                    <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-xs text-blue-900 flex items-center gap-2 mb-1">
+                            <i data-lucide="key" class="w-4 h-4 text-blue-600"></i> Control de Permisos
+                        </h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Microsoft Graph valida que el consultor solo reciba información a la que tiene permisos en SharePoint.</p>
+                    </div>
+
+                    <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                        <h4 class="font-bold text-xs text-blue-900 flex items-center gap-2 mb-1">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i> Cero Alucinaciones
+                        </h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">El modelo tiene estrictamente prohibido responder sin respaldarse en una fuente indexada válida.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: CONFIGURACIÓN COPILOT STUDIO ==================== -->
+        <div id="tab-admin" class="tab-content hidden h-full p-4 overflow-y-auto custom-scrollbar">
+            <div class="max-w-5xl mx-auto space-y-6">
+                <!-- Panel de KPIs y Métricas de Agente -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-xs font-semibold text-slate-500">Consultas Mes Actual</div>
+                        <div class="text-2xl font-bold text-slate-900 my-1">1,420</div>
+                        <div class="text-[11px] text-emerald-600 flex items-center gap-1 font-medium"><i data-lucide="trending-up" class="w-3 h-3"></i> +18% vs mes anterior</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-xs font-semibold text-slate-500">Precisión de Citación</div>
+                        <div class="text-2xl font-bold text-slate-900 my-1">99.4%</div>
+                        <div class="text-[11px] text-emerald-600 flex items-center gap-1 font-medium"><i data-lucide="check" class="w-3 h-3"></i> Sin alucinaciones detectadas</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-xs font-semibold text-slate-500">Tiempo de Respuesta Medición</div>
+                        <div class="text-2xl font-bold text-slate-900 my-1">1.2s</div>
+                        <div class="text-[11px] text-blue-600 font-medium">Latencia Óptima Azure AI</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="text-xs font-semibold text-slate-500">Ahorro Estimado Consultores</div>
+                        <div class="text-2xl font-bold text-slate-900 my-1">320 hrs</div>
+                        <div class="text-[11px] text-slate-500 font-medium">En búsquedas legales este mes</div>
+                    </div>
+                </div>
+
+                <!-- Panel de Parámetros del Agente -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i data-lucide="settings" class="w-4 h-4 text-blue-600"></i> Parámetros del Agente en Copilot Studio
+                    </h2>
+
+                    <div class="space-y-5">
+                        <!-- System Prompt -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">System Prompt Principal (Instrucciones del Sistema)</label>
+                            <textarea id="system-prompt" rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-blue-600">
+Eres el Asistente Experto en Normativa Fiscal y Legal Interna de Auren Spain. Tu función es responder consultas de los consultores basándote EXCLUSIVAMENTE en la documentación proporcionada en la fuente de conocimiento de SharePoint. Cita siempre el documento exacto y la sección/página. Si la información no está en la base de datos, responde respetuosamente que no dispones de la normativa oficial para esa consulta.</textarea>
+                        </div>
+
+                        <!-- Temperatura del Modelo -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs font-semibold text-slate-700">Temperatura del Modelo (Creatividad vs Rigor)</label>
+                                    <span id="temp-val" class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">0.0 (Rigor Máximo)</span>
+                                </div>
+                                <input type="range" min="0" max="1" step="0.1" value="0" oninput="document.getElementById('temp-val').innerText = this.value + (this.value == 0 ? ' (Rigor Máximo)' : '')" class="w-full accent-blue-600">
+                                <p class="text-[11px] text-slate-400 mt-1">Configurar en 0.0 es indispensable para entornos legales y fiscales para prevenir alucinaciones.</p>
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700 block mb-1">Modelo de Lenguaje Asignado</label>
+                                <select class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800">
+                                    <option value="gpt-4o">Azure OpenAI - GPT-4o (Recomendado para análisis normativo)</option>
+                                    <option value="gpt-4-turbo">Azure OpenAI - GPT-4 Turbo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex justify-end">
+                            <button onclick="saveAdminSettings()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2 shadow-sm">
+                                <i data-lucide="save" class="w-4 h-4"></i> Guardar Configuración del Agente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Carga de Documentos -->
+    <div id="upload-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md p-6">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                    <i data-lucide="upload" class="w-4 h-4 text-blue-600"></i> Ingestar Documento a SharePoint
+                </h3>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            
+            <form onsubmit="handleDocumentUpload(event)" class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Título de la Normativa / Circular</label>
+                    <input id="up-title" type="text" required placeholder="Ej: Circular 04/2026 - Fiscalidad Criptoactivos" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Categoría</label>
+                    <select id="up-category" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        <option value="Fiscal">Fiscal</option>
+                        <option value="Laboral">Laboral</option>
+                        <option value="Mercantil">Mercantil</option>
+                        <option value="Protección de Datos">Protección de Datos</option>
+                    </select>
+                </div>
+
+                <div class="border-2 border-dashed border-slate-200 p-6 rounded-xl text-center bg-slate-50 hover:bg-slate-100/50 transition cursor-pointer">
+                    <i data-lucide="file-up" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+                    <p class="text-xs font-medium text-slate-600">Arrastra un archivo PDF o Word aquí</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Sincronización vectorial automática con Azure AI Search</p>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl">Indexar Documento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar Iconos Lucide
+        lucide.createIcons();
+
+        // Base de Datos Simulada de Normativa Auren (RAG Vector Base)
+        let knowledgeBase = [
+            {
+                id: 'AUR-FIS-2026-01',
+                title: 'Guía de Deducción de Gastos de Representación y Clientes',
+                category: 'Fiscal',
+                date: '10/01/2026',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Los gastos de representación son deducibles en el IS hasta el límite del 1% del importe neto de la cifra de negocios de la entidad. Se requiere factura completa y justificación documental del motivo profesional del encuentro.'
+            },
+            {
+                id: 'AUR-LAB-2025-08',
+                title: 'Convenio Interno de Teletrabajo y Desconexión Digital',
+                category: 'Laboral',
+                date: '15/09/2025',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Los consultores de Auren pueden acogerse a hasta 2 días semanales de trabajo remoto previa autorización del socio de área. Se compensará el equipamiento con una asignación mensual reflejada en nómina.'
+            },
+            {
+                id: 'AUR-FIS-2025-12',
+                title: 'Protocolo de Facturación Intracomunitaria e IVA (VIES)',
+                category: 'Fiscal',
+                date: '02/12/2025',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Para prestar servicios a clientes de la UE con exención de IVA es imprescindible verificar previamente la validez del NIF-IVA en el censo VIES. La factura debe incluir la mención explícita de inversión del sujeto pasivo.'
+            },
+            {
+                id: 'AUR-MER-2024-03',
+                title: 'Política de Viajes, Dietas y Gastos de Desplazamiento',
+                category: 'Mercantil',
+                date: '20/03/2024',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Las dietas nacionales exentas de IRPF quedan fijadas en 53,34 €/día sin pernocta y 91,35 €/día con pernocta. El kilometraje en vehículo propio se abonará a 0,26 €/km abonando peajes justificables.'
+            },
+            {
+                id: 'AUR-RGPD-2025-02',
+                title: 'Manual de Tratamiento de Datos Personales de Clientes',
+                category: 'Protección de Datos',
+                date: '11/02/2025',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Queda prohibido almacenar información confidencial o sensible de clientes de Auren en dispositivos personales o herramientas de IA generativa públicas no aprobadas por el DPO.'
+            }
+        ];
+
+        let currentCategory = 'All';
+
+        // Cambio de Pestañas Navegación
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-300', 'hover:bg-slate-700/50');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+            activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-700/50');
+        }
+
+        // Cargar Tabla de Documentos
+        function renderDocumentsTable() {
+            const tbody = document.getElementById('docs-table-body');
+            tbody.innerHTML = '';
+
+            const searchTerm = document.getElementById('doc-search')?.value.toLowerCase() || '';
+
+            const filtered = knowledgeBase.filter(doc => {
+                const matchesCat = currentCategory === 'All' || doc.category === currentCategory;
+                const matchesSearch = doc.title.toLowerCase().includes(searchTerm) || doc.id.toLowerCase().includes(searchTerm);
+                return matchesCat && matchesSearch;
+            });
+
+            filtered.forEach(doc => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+                tr.innerHTML = `
+                    <td class="p-3.5 pl-4 font-semibold text-slate-800">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                            <div>
+                                <div>${doc.title}</div>
+                                <div class="text-[10px] text-slate-400 font-mono font-normal">${doc.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${doc.category}</span></td>
+                    <td class="p-3.5 text-slate-500">${doc.date}</td>
+                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${doc.status}</span></td>
+                    <td class="p-3.5"><span class="flex items-center gap-1 text-emerald-600 font-medium text-[11px]"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Indexado en Azure</span></td>
+                    <td class="p-3.5 text-right pr-4">
+                        <button onclick="previewDocument('${doc.id}')" class="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition" title="Ver extracto"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        function setFilterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-700');
+            });
+            event.target.classList.remove('bg-slate-100', 'text-slate-700');
+            event.target.classList.add('bg-slate-900', 'text-white');
+            renderDocumentsTable();
+        }
+
+        function filterDocuments() {
+            renderDocumentsTable();
+        }
+
+        // Simulación de Respuestas IA basadas en RAG
+        function sendQuickPrompt(type) {
+            const input = document.getElementById('chat-input');
+            if (type === 'Deducción IRPF') input.value = "¿Cuál es la normativa para deducir gastos de representación en impuesto de sociedades?";
+            if (type === 'Viajes y Dietas') input.value = "¿Cuáles son los importes autorizados de dietas para viajes de consultoría sin pernocta?";
+            if (type === 'Facturación Intracomunitaria') input.value = "¿Qué procedimiento debemos seguir para facturar a un cliente de la Unión Europea?";
+            if (type === 'Teletrabajo y Conciliación') input.value = "¿Cuántos días de trabajo remoto contempla el convenio interno de Auren?";
+            if (type === 'Protección de Datos RGPD') input.value = "¿Puedo usar modelos de IA públicos para resumir documentación confidencial de un cliente?";
+            
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            addChatMessage('user', query);
+            input.value = '';
+
+            // Indicador de "Pensando / Buscando en SharePoint..."
+            const loadingId = addChatLoading();
+
+            setTimeout(() => {
+                removeChatLoading(loadingId);
+                generateRAGResponse(query);
+            }, 1000);
+        }
+
+        function addChatMessage(role, text) {
+            const container = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-3 ' + (role === 'user' ? 'justify-end' : '');
+
+            if (role === 'user') {
+                msgDiv.innerHTML = `
+                    <div class="flex-1 max-w-2xl flex justify-end">
+                        <div class="bg-blue-600 text-white p-3 px-4 rounded-2xl rounded-tr-none text-xs leading-relaxed shadow-sm">
+                            ${text}
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-slate-800 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                        RV
+                    </div>
+                `;
+            }
+
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addChatLoading() {
+            const container = document.getElementById('chat-messages');
+            const loadingDiv = document.createElement('div');
+            const id = 'loading-' + Date.now();
+            loadingDiv.id = id;
+            loadingDiv.className = 'flex gap-3';
+            loadingDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex-shrink-0 flex items-center justify-center text-white shadow-sm">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none border border-slate-200 text-xs text-slate-500 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+                    Consultando índice vectorial Azure AI Search & SharePoint...
+                </div>
+            `;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+            lucide.createIcons();
+            return id;
+        }
+
+        function removeChatLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function generateRAGResponse(query) {
+            const container = document.getElementById('chat-messages');
+            const lowerQuery = query.toLowerCase();
+
+            let matchedDoc = knowledgeBase[0]; // Por defecto
+            if (lowerQuery.includes('dieta') || lowerQuery.includes('viaje') || lowerQuery.includes('kilómetr') || lowerQuery.includes('gastos')) {
+                matchedDoc = knowledgeBase.find(d => d.id === 'AUR-MER-2024-03');
+            } else if (lowerQuery.includes('teletrabajo') || lowerQuery.includes('remoto') || lowerQuery.includes('convenio')) {
+                matchedDoc = knowledgeBase.find(d => d.id === 'AUR-LAB-2025-08');
+            } else if (lowerQuery.includes('factura') || lowerQuery.includes('iva') || lowerQuery.includes('vies') || lowerQuery.includes('europea')) {
+                matchedDoc = knowledgeBase.find(d => d.id === 'AUR-FIS-2025-12');
+            } else if (lowerQuery.includes('ia') || lowerQuery.includes('rgpd') || lowerQuery.includes('confidencial') || lowerQuery.includes('datos')) {
+                matchedDoc = knowledgeBase.find(d => d.id === 'AUR-RGPD-2025-02');
+            }
+
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'flex gap-3';
+            responseDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex-shrink-0 flex items-center justify-center text-white shadow-sm">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <div class="flex-1 max-w-2xl space-y-2">
+                    <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none text-slate-800 text-xs leading-relaxed border border-slate-200">
+                        <p class="font-semibold text-slate-900 mb-2">Según la normativa oficial interna de Auren Consultoría:</p>
+                        <p class="mb-3">${matchedDoc.content}</p>
+                        
+                        <!-- Tarjeta Cita de Fuente RAG -->
+                        <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-sm mt-3">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                                <span class="text-[10px] font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="bookmark" class="w-3 h-3 text-blue-600"></i> Fuente Citada (SharePoint)
+                                </span>
+                                <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded">Vigente</span>
+                            </div>
+                            <div class="text-xs font-bold text-slate-800">${matchedDoc.title}</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5 flex items-center justify-between">
+                                <span>Código: ${matchedDoc.id}</span>
+                                <span>Última mod: ${matchedDoc.date}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(responseDiv);
+            container.scrollTop = container.scrollHeight;
+            lucide.createIcons();
+        }
+
+        function clearChat() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = `
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex-shrink-0 flex items-center justify-center text-white shadow-sm">
+                        <i data-lucide="bot" class="w-4 h-4"></i>
+                    </div>
+                    <div class="flex-1 max-w-2xl">
+                        <div class="bg-slate-100 p-4 rounded-2xl rounded-tl-none text-slate-800 text-xs leading-relaxed border border-slate-200">
+                            <p class="font-semibold text-slate-900 mb-1">Chat reiniciado. ¿En qué normativa puedo ayudarte?</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Modales
+        function triggerUploadModal() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+            document.getElementById('upload-modal').classList.add('flex');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.add('hidden');
+            document.getElementById('upload-modal').classList.remove('flex');
+        }
+
+        function handleDocumentUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('up-title').value;
+            const category = document.getElementById('up-category').value;
+
+            const newDoc = {
+                id: `AUR-${category.substring(0,3).toUpperCase()}-2026-${Math.floor(Math.random()*90 + 10)}`,
+                title: title,
+                category: category,
+                date: 'Hoy',
+                status: 'Vigente',
+                indexed: true,
+                content: 'Documentación recién ingesta por el usuario y procesada mediante Azure AI Search para consultas de alta precisión.'
+            };
+
+            knowledgeBase.unshift(newDoc);
+            renderDocumentsTable();
+            closeUploadModal();
+            alert('¡Documento subido e indexado correctamente en el índice RAG de Azure!');
+        }
+
+        function previewDocument(id) {
+            const doc = knowledgeBase.find(d => d.id === id);
+            if (doc) {
+                alert(`[EXTRACTO DEL DOCUMENTO OFICIAL]\n\nCódigo: ${doc.id}\nTítulo: ${doc.title}\nContenido: ${doc.content}`);
+            }
+        }
+
+        function saveAdminSettings() {
+            alert('Configuración del Agente guardada correctamente en Copilot Studio.');
+        }
+
+        // Inicializar
+        window.onload = function() {
+            renderDocumentsTable();
+        };
+    </script>
+</body>
+</html>

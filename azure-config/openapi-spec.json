@@ -1,0 +1,41 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Auren Sage ERP Integration API",
+    "description": "Custom Connector para consultar estado de expedientes y datos fiscales desde sistemas ERP externos.",
+    "version": "1.0.0"
+  },
+  "host": "api.auren.es",
+  "basePath": "/v1",
+  "schemes": ["https"],
+  "paths": {
+    "/fiscal/expediente/{id}": {
+      "get": {
+        "summary": "Obtener estado fiscal de expediente",
+        "operationId": "GetExpedienteFiscal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID único del expediente fiscal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consulta exitosa",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "expedienteId": { "type": "string" },
+                "estado": { "type": "string" },
+                "normativaAplicable": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
